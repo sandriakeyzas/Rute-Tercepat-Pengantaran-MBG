@@ -1,0 +1,365 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--color-background-tertiary);color:var(--color-text-primary)}
+#app{display:flex;flex-direction:column;height:600px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.hdr{background:#1a6b3a;color:#fff;padding:8px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.hdr h2{font-size:14px;font-weight:500}
+.hdr p{font-size:10px;opacity:.8;margin-top:1px}
+.sop{font-size:10px;text-align:right;background:rgba(255,255,255,.15);border-radius:6px;padding:4px 8px;line-height:1.5}
+.body{display:flex;flex:1;overflow:hidden}
+.side{width:290px;flex-shrink:0;background:var(--color-background-primary);border-right:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column;overflow:hidden}
+.side-scroll{flex:1;overflow-y:auto;padding:10px}
+.side-scroll::-webkit-scrollbar{width:3px}
+.side-scroll::-webkit-scrollbar-thumb{background:var(--color-border-tertiary)}
+.steps{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 10px;margin-bottom:10px}
+.step{display:flex;align-items:center;gap:6px;font-size:11px;color:#1a6b3a;font-weight:500;padding:1px 0}
+.snum{background:#1a6b3a;color:#fff;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0}
+.slbl{font-size:10px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;margin-top:8px}
+select,input[type=number]{width:100%;padding:6px 8px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-family:inherit;font-size:12px;background:var(--color-background-primary);color:var(--color-text-primary);appearance:none;cursor:pointer}
+select:focus,input:focus{outline:2px solid #1a6b3a;outline-offset:-1px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.prog-wrap{background:var(--color-background-secondary);border-radius:4px;height:5px;margin-top:4px;overflow:hidden}
+.prog-bar{height:100%;background:#1a6b3a;border-radius:4px;transition:width .4s,background .3s}
+.cap-txt{font-size:10px;color:var(--color-text-secondary);margin-top:3px;font-family:var(--font-mono)}
+.stop-row{display:flex;gap:4px;align-items:center;margin-bottom:5px}
+.stop-row select{flex:1;font-size:11px}
+.stop-row input{width:60px;flex-shrink:0;font-size:11px;padding:6px 4px}
+.rm-btn{background:none;border:0.5px solid var(--color-border-tertiary);border-radius:6px;width:26px;height:28px;cursor:pointer;color:var(--color-text-secondary);font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rm-btn:hover{border-color:#c0392b;color:#c0392b}
+.btn{width:100%;padding:7px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .15s}
+.btn-add{background:var(--color-background-secondary);color:#1a6b3a;border-style:dashed;margin-bottom:6px}
+.btn-add:hover{background:#e8f5ee}
+.btn-calc{background:#1a6b3a;color:#fff;margin-bottom:5px;border:none}
+.btn-calc:hover:not(:disabled){background:#155c30}
+.btn-calc:disabled{opacity:.6;cursor:wait}
+.btn-rst{background:var(--color-background-primary);color:var(--color-text-secondary)}
+.btn-rst:hover{color:#c0392b;border-color:#c0392b}
+.leg{border-top:0.5px solid var(--color-border-tertiary);padding:8px 10px;flex-shrink:0}
+.lt{font-size:10px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px}
+.leg-section{font-size:9px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.5px;margin:5px 0 3px;opacity:.7}
+.li{display:flex;align-items:center;gap:6px;font-size:11px;margin-bottom:3px;color:var(--color-text-primary)}
+.ll{width:22px;height:3px;border-radius:2px;flex-shrink:0}
+.ll-dashed{width:22px;height:3px;flex-shrink:0;background:repeating-linear-gradient(90deg,#c0392b 0,#c0392b 5px,transparent 5px,transparent 8px)}
+.ld{width:10px;height:10px;border-radius:50%;flex-shrink:0;border:2px solid var(--color-background-primary)}
+.mapw{flex:1;position:relative;overflow:hidden}
+#map{width:100%;height:100%}
+.tbadge{position:absolute;top:8px;right:8px;z-index:999;background:var(--color-background-primary);border-radius:6px;padding:4px 8px;font-size:10px;border:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:4px;font-weight:500;color:var(--color-text-primary)}
+.tdot{width:7px;height:7px;border-radius:50%;background:#2ecc71;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.res{position:absolute;bottom:10px;right:10px;width:260px;background:var(--color-background-primary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);z-index:999;max-height:45%;overflow-y:auto;display:none}
+.res.on{display:block}
+.rh{padding:8px 10px;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500}
+.rb{padding:8px 10px}
+.rc{border-radius:var(--border-radius-md);padding:8px 10px;margin-bottom:6px;border-left:3px solid #1a6b3a;background:var(--color-background-secondary)}
+.rc.w{border-left-color:#c0392b;background:#fff0f0}
+.rc h4{font-size:11px;font-weight:500;margin-bottom:3px}
+.rc p{font-size:10px;color:var(--color-text-secondary);line-height:1.5;font-family:var(--font-mono)}
+.rs{display:flex;align-items:center;gap:5px;font-size:10px;padding:1px 0}
+.rdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.toast{position:fixed;bottom:14px;left:50%;transform:translateX(-50%) translateY(60px);background:#1c1c1c;color:#fff;padding:7px 14px;border-radius:8px;font-size:12px;z-index:9999;transition:transform .25s;pointer-events:none}
+.toast.on{transform:translateX(-50%) translateY(0)}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+
+<div id="app">
+  <div class="hdr">
+    <div><h2>MBG Route Finder – Kota Semarang</h2><p>Penentuan Jarak Tercepat Distribusi MBG</p></div>
+    <div class="sop">SOP Distribusi<br>≤30 mnt &amp; ≤5 km<br>Matang→Konsumsi: Maks 4 Jam</div>
+  </div>
+  <div class="body">
+    <div class="side">
+      <div class="side-scroll">
+        <div class="steps">
+          <div class="step"><span class="snum">1</span> Pilih Dapur SPPG</div>
+          <div class="step"><span class="snum">2</span> Atur Stop Sekolah</div>
+          <div class="step"><span class="snum">3</span> Lihat Rute &amp; Distribusi</div>
+        </div>
+        <div class="slbl">Dapur SPPG (Titik Awal)</div>
+        <select id="sppgSel" onchange="onSPPG()"><option value="">— Pilih Dapur SPPG —</option></select>
+        <div class="slbl" style="margin-top:10px">Kapasitas Kendaraan</div>
+        <div style="font-size:10px;color:var(--color-text-secondary);margin-bottom:5px">Maks. 1 kendaraan: 1.000 box siswa</div>
+        <div class="row2">
+          <div><div class="slbl">Kendaraan</div><select id="vCount" onchange="updateCap()"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+          <div><div class="slbl">Tenggang (mnt)</div><select id="tenggang"><option>5</option><option selected>10</option><option>15</option><option>20</option><option>30</option></select></div>
+        </div>
+        <div class="prog-wrap"><div class="prog-bar" id="pBar" style="width:0%"></div></div>
+        <div class="cap-txt" id="capTxt">Terpakai: 0 / 1.000 box</div>
+        <div class="slbl" style="margin-top:10px">Rute Pengiriman (Multi-Stop)</div>
+        <div id="stopList"></div>
+        <button class="btn btn-add" onclick="addStop()">+ Tambah Sekolah</button>
+        <button class="btn btn-calc" id="calcBtn" onclick="calcRoutes()"><span id="ci">&#128506;</span> Hitung Semua Rute</button>
+        <button class="btn btn-rst" onclick="resetAll()">&#8635; Reset</button>
+      </div>
+      <div class="leg">
+        <div class="lt">Legenda</div>
+        <div class="leg-section">Rute</div>
+        <div class="li"><div class="ll" style="background:#1a6b3a"></div>Sesuai SOP (≤5 km &amp; ≤30 mnt)</div>
+        <div class="li"><div class="ll" style="background:#c0392b"></div>Tidak Sesuai SOP</div>
+        <div class="leg-section">Titik</div>
+        <div class="li"><div class="ld" style="background:#1a6b3a"></div>Dapur SPPG (Titik Awal)</div>
+        <div class="li"><div class="ld" style="background:#e8a020"></div>Sekolah Tujuan</div>
+      </div>
+    </div>
+    <div class="mapw">
+      <div id="map"></div>
+      <div class="tbadge"><div class="tdot"></div>Real-Time (OSRM)</div>
+      <div class="res" id="resPanel"><div class="rh">Hasil Distribusi</div><div class="rb" id="resBody"></div></div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
+<script>
+const SPPG=[
+  {id:1,name:"SPPG Banyumanik",lat:-7.0762,lng:110.4244,kel:"Banyumanik"},
+  {id:2,name:"SPPG Tembalang",lat:-7.0507,lng:110.4387,kel:"Tembalang"},
+  {id:3,name:"SPPG Pedurungan",lat:-6.9989,lng:110.4606,kel:"Pedurungan"},
+  {id:4,name:"SPPG Gayamsari",lat:-6.9944,lng:110.4419,kel:"Gayamsari"},
+  {id:5,name:"SPPG Semarang Selatan",lat:-7.0148,lng:110.4095,kel:"Pleburan"},
+  {id:6,name:"SPPG Candisari",lat:-7.0147,lng:110.4225,kel:"Candisari"},
+  {id:7,name:"SPPG Gajahmungkur",lat:-7.0087,lng:110.4060,kel:"Gajahmungkur"},
+  {id:8,name:"SPPG Semarang Barat",lat:-6.9766,lng:110.3822,kel:"Krobokan"},
+  {id:9,name:"SPPG Semarang Utara",lat:-6.9572,lng:110.4100,kel:"Bulu Lor"},
+  {id:10,name:"SPPG Semarang Tengah",lat:-6.9828,lng:110.4119,kel:"Miroto"},
+  {id:11,name:"SPPG Semarang Timur",lat:-6.9844,lng:110.4389,kel:"Rejosari"},
+  {id:12,name:"SPPG Genuk",lat:-6.9771,lng:110.4679,kel:"Genuk"},
+  {id:13,name:"SPPG Ngaliyan",lat:-7.0032,lng:110.3566,kel:"Ngaliyan"},
+  {id:14,name:"SPPG Mijen",lat:-7.0668,lng:110.3280,kel:"Mijen"},
+  {id:15,name:"SPPG Gunungpati",lat:-7.0987,lng:110.3866,kel:"Gunungpati"},
+  {id:16,name:"SPPG Tugu",lat:-6.9496,lng:110.3499,kel:"Mangkang"},
+];
+const SCH=[
+  {id:1,name:"SDN Banyumanik 01",lat:-7.0721,lng:110.4198,kec:"Banyumanik",s:280},
+  {id:2,name:"SDN Banyumanik 02",lat:-7.0778,lng:110.4261,kec:"Banyumanik",s:245},
+  {id:3,name:"SMPN 22 Semarang",lat:-7.0795,lng:110.4230,kec:"Banyumanik",s:480},
+  {id:4,name:"SDN Srondol Wetan 01",lat:-7.0822,lng:110.4131,kec:"Banyumanik",s:198},
+  {id:5,name:"SDN Padangsari",lat:-7.0688,lng:110.4305,kec:"Banyumanik",s:215},
+  {id:6,name:"SDN Tembalang 01",lat:-7.0501,lng:110.4349,kec:"Tembalang",s:310},
+  {id:7,name:"SDN Sambiroto 01",lat:-7.0432,lng:110.4421,kec:"Tembalang",s:267},
+  {id:8,name:"SMPN 27 Semarang",lat:-7.0512,lng:110.4398,kec:"Tembalang",s:512},
+  {id:9,name:"SDN Bulusan",lat:-7.0580,lng:110.4476,kec:"Tembalang",s:189},
+  {id:10,name:"SDN Kramas",lat:-7.0447,lng:110.4513,kec:"Tembalang",s:223},
+  {id:11,name:"SDN Pedurungan Kidul 01",lat:-6.9921,lng:110.4589,kec:"Pedurungan",s:334},
+  {id:12,name:"SDN Tlogomulyo",lat:-7.0014,lng:110.4632,kec:"Pedurungan",s:298},
+  {id:13,name:"SMPN 39 Semarang",lat:-7.0022,lng:110.4598,kec:"Pedurungan",s:467},
+  {id:14,name:"SDN Plamongan Indah",lat:-6.9988,lng:110.4710,kec:"Pedurungan",s:278},
+  {id:15,name:"SDN Gayamsari 01",lat:-6.9939,lng:110.4391,kec:"Gayamsari",s:320},
+  {id:16,name:"SDN Sambirejo",lat:-6.9908,lng:110.4456,kec:"Gayamsari",s:256},
+  {id:17,name:"SMPN 34 Semarang",lat:-6.9955,lng:110.4422,kec:"Gayamsari",s:543},
+  {id:18,name:"SDN Pleburan 01",lat:-7.0132,lng:110.4088,kec:"Semarang Selatan",s:287},
+  {id:19,name:"SDN Wonodri",lat:-7.0178,lng:110.4145,kec:"Semarang Selatan",s:312},
+  {id:20,name:"SMPN 5 Semarang",lat:-7.0099,lng:110.4064,kec:"Semarang Selatan",s:611},
+  {id:21,name:"SDN Candi 01",lat:-7.0188,lng:110.4201,kec:"Candisari",s:245},
+  {id:22,name:"SMPN 20 Semarang",lat:-7.0155,lng:110.4222,kec:"Candisari",s:489},
+  {id:23,name:"SDN Gajahmungkur 01",lat:-7.0078,lng:110.4044,kec:"Gajahmungkur",s:198},
+  {id:24,name:"SDN Bendan Duwur",lat:-7.0110,lng:110.3988,kec:"Gajahmungkur",s:234},
+  {id:25,name:"SDN Krobokan 01",lat:-6.9777,lng:110.3791,kec:"Semarang Barat",s:302},
+  {id:26,name:"SDN Tawangmas 01",lat:-6.9710,lng:110.3866,kec:"Semarang Barat",s:278},
+  {id:27,name:"SMPN 28 Semarang",lat:-6.9748,lng:110.3844,kec:"Semarang Barat",s:534},
+  {id:28,name:"SDN Bojongsalaman",lat:-6.9832,lng:110.3901,kec:"Semarang Barat",s:221},
+  {id:29,name:"SDN Bulu Lor 01",lat:-6.9588,lng:110.4122,kec:"Semarang Utara",s:289},
+  {id:30,name:"SDN Plombokan",lat:-6.9544,lng:110.4056,kec:"Semarang Utara",s:267},
+  {id:31,name:"SMPN 11 Semarang",lat:-6.9561,lng:110.4088,kec:"Semarang Utara",s:498},
+  {id:32,name:"SDN Bandarharjo",lat:-6.9622,lng:110.4178,kec:"Semarang Utara",s:312},
+  {id:33,name:"SDN Miroto 01",lat:-6.9833,lng:110.4108,kec:"Semarang Tengah",s:234},
+  {id:34,name:"SDN Sekayu",lat:-6.9788,lng:110.4088,kec:"Semarang Tengah",s:198},
+  {id:35,name:"SMPN 2 Semarang",lat:-6.9801,lng:110.4133,kec:"Semarang Tengah",s:723},
+  {id:36,name:"SDN Rejosari 01",lat:-6.9832,lng:110.4378,kec:"Semarang Timur",s:278},
+  {id:37,name:"SDN Bugangan 01",lat:-6.9789,lng:110.4422,kec:"Semarang Timur",s:245},
+  {id:38,name:"SMPN 18 Semarang",lat:-6.9811,lng:110.4401,kec:"Semarang Timur",s:512},
+  {id:39,name:"SDN Genuksari 01",lat:-6.9788,lng:110.4645,kec:"Genuk",s:267},
+  {id:40,name:"SDN Muktiharjo Lor",lat:-6.9721,lng:110.4589,kec:"Genuk",s:234},
+  {id:41,name:"SMPN 38 Semarang",lat:-6.9766,lng:110.4677,kec:"Genuk",s:489},
+  {id:42,name:"SDN Ngaliyan 01",lat:-7.0018,lng:110.3544,kec:"Ngaliyan",s:312},
+  {id:43,name:"SDN Bambankerep",lat:-7.0088,lng:110.3611,kec:"Ngaliyan",s:245},
+  {id:44,name:"SMPN 26 Semarang",lat:-7.0032,lng:110.3578,kec:"Ngaliyan",s:498},
+  {id:45,name:"SDN Mijen 01",lat:-7.0655,lng:110.3244,kec:"Mijen",s:198},
+  {id:46,name:"SDN Jatibarang",lat:-7.0721,lng:110.3322,kec:"Mijen",s:178},
+  {id:47,name:"SMPN 37 Semarang",lat:-7.0677,lng:110.3289,kec:"Mijen",s:345},
+  {id:48,name:"SDN Gunungpati 01",lat:-7.0966,lng:110.3844,kec:"Gunungpati",s:189},
+  {id:49,name:"SDN Sumurjurang",lat:-7.1032,lng:110.3899,kec:"Gunungpati",s:167},
+  {id:50,name:"SMPN 36 Semarang",lat:-7.0978,lng:110.3866,kec:"Gunungpati",s:312},
+  {id:51,name:"SDN Mangkang Wetan 01",lat:-6.9511,lng:110.3511,kec:"Tugu",s:198},
+  {id:52,name:"SDN Tugurejo",lat:-6.9466,lng:110.3455,kec:"Tugu",s:178},
+  {id:53,name:"SMPN 41 Semarang",lat:-6.9488,lng:110.3488,kec:"Tugu",s:312},
+];
+
+const COLOR_OK='#1a6b3a';
+const COLOR_WARN='#c0392b';
+const COLOR_SCH='#e8a020';
+
+let map,sppgMk=null,schMks=[],routeLayers=[],sid=0;
+
+function initMap(){
+  map=L.map('map',{zoomControl:false}).setView([-7.005,110.408],12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:19}).addTo(map);
+  L.control.zoom({position:'topleft'}).addTo(map);
+}
+
+function populateSPPG(){
+  const s=document.getElementById('sppgSel');
+  SPPG.forEach(d=>s.appendChild(new Option(`${d.name} (${d.kel})`,d.id)));
+}
+
+function onSPPG(){
+  const id=+document.getElementById('sppgSel').value;
+  if(sppgMk){map.removeLayer(sppgMk);sppgMk=null;}
+  if(!id)return;
+  const d=SPPG.find(x=>x.id===id);
+  sppgMk=L.circleMarker([d.lat,d.lng],{radius:12,fillColor:COLOR_OK,color:'#fff',weight:2.5,fillOpacity:1})
+    .addTo(map).bindPopup(`<b>${d.name}</b><br>Titik Awal Distribusi`).openPopup();
+  map.setView([d.lat,d.lng],13);
+}
+
+function selIds(){return [...document.querySelectorAll('.ssch')].map(s=>+s.value).filter(v=>v);}
+
+function refreshOpts(){
+  const sel=selIds();
+  document.querySelectorAll('.ssch').forEach(el=>{
+    const cv=+el.value;
+    const others=sel.filter(id=>id!==cv);
+    el.innerHTML='<option value="">— Pilih Sekolah —</option>'+
+      SCH.filter(s=>!others.includes(s.id)).map(s=>`<option value="${s.id}"${s.id===cv?' selected':''}>${s.name} – ${s.kec} (${s.s} siswa)</option>`).join('');
+  });
+}
+
+function updateCap(){
+  const v=+document.getElementById('vCount').value,max=v*1000;
+  let tot=0;
+  document.querySelectorAll('.stop-row').forEach(row=>{
+    const id=+row.querySelector('.ssch').value;
+    if(id){const qi=row.querySelector('input');const qty=qi&&qi.value?+qi.value:SCH.find(s=>s.id===id).s;tot+=qty;}
+  });
+  const pct=Math.min(100,tot/max*100);
+  const bar=document.getElementById('pBar');
+  bar.style.width=pct+'%';
+  bar.style.background=pct>90?COLOR_WARN:pct>70?'#e8a020':COLOR_OK;
+  document.getElementById('capTxt').textContent=`Terpakai: ${tot.toLocaleString()} / ${max.toLocaleString()} box`;
+}
+
+function addStop(){
+  const id=++sid;
+  const div=document.createElement('div');
+  div.className='stop-row';div.id=`sr${id}`;
+  div.innerHTML=`<select class="ssch" onchange="refreshOpts();updateCap()">${'<option value="">— Pilih Sekolah —</option>'+SCH.filter(s=>!selIds().includes(s.id)).map(s=>`<option value="${s.id}">${s.name} – ${s.kec} (${s.s} siswa)</option>`).join('')}</select><input type="number" min="1" max="1000" placeholder="Box" oninput="updateCap()"/><button class="rm-btn" onclick="rmStop(${id})">✕</button>`;
+  document.getElementById('stopList').appendChild(div);
+  refreshOpts();
+}
+
+function rmStop(id){const e=document.getElementById(`sr${id}`);if(e)e.remove();refreshOpts();updateCap();}
+
+async function getRoute(coords){
+  const cs=coords.map(c=>`${c[1]},${c[0]}`).join(';');
+  try{
+    const r=await fetch(`https://router.project-osrm.org/route/v1/driving/${cs}?overview=full&geometries=geojson`);
+    const d=await r.json();
+    if(d.code==='Ok'&&d.routes.length)return d.routes[0];
+  }catch(e){console.error(e);}
+  return null;
+}
+
+async function calcRoutes(){
+  const sppgId=+document.getElementById('sppgSel').value;
+  if(!sppgId){toast('Pilih Dapur SPPG terlebih dahulu!');return;}
+  const stops=[];
+  document.querySelectorAll('.stop-row').forEach(row=>{
+    const id=+row.querySelector('.ssch').value;
+    if(id){const sc=SCH.find(s=>s.id===id);const qi=row.querySelector('input');const qty=qi&&qi.value?+qi.value:sc.s;stops.push({sc,qty});}
+  });
+  if(!stops.length){toast('Tambahkan minimal 1 sekolah!');return;}
+
+  const btn=document.getElementById('calcBtn');
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span> Menghitung...';
+  routeLayers.forEach(l=>map.removeLayer(l));routeLayers=[];
+  schMks.forEach(m=>map.removeLayer(m));schMks=[];
+
+  const sppg=SPPG.find(s=>s.id===sppgId);
+  const vCount=+document.getElementById('vCount').value;
+  const tg=+document.getElementById('tenggang').value;
+
+  const vLoads=Array.from({length:vCount},()=>({stops:[],total:0}));
+  stops.forEach(stop=>{
+    let ok=false;
+    for(let i=0;i<vCount;i++){if(vLoads[i].total+stop.qty<=1000){vLoads[i].stops.push(stop);vLoads[i].total+=stop.qty;ok=true;break;}}
+    if(!ok){vLoads[vCount-1].stops.push(stop);vLoads[vCount-1].total+=stop.qty;}
+  });
+
+  const active=vLoads.filter(v=>v.stops.length);
+  const html=[];
+
+  for(let vi=0;vi<active.length;vi++){
+    const vd=active[vi];
+    const coords=[[sppg.lat,sppg.lng],...vd.stops.map(s=>[s.sc.lat,s.sc.lng])];
+    const route=await getRoute(coords);
+
+    let distKm=0,durMin=0;
+    if(route){
+      distKm=parseFloat((route.distance/1000).toFixed(1));
+      durMin=Math.round(route.duration/60+vd.stops.length*tg);
+    }
+
+    const sopOk=distKm<=5&&durMin<=30;
+    const routeColor=sopOk?COLOR_OK:COLOR_WARN;
+
+    // Marker sekolah - warna kuning/oranye tetap untuk titik sekolah
+    vd.stops.forEach((stop,si)=>{
+      const m=L.circleMarker([stop.sc.lat,stop.sc.lng],{radius:8,fillColor:COLOR_SCH,color:'#fff',weight:2,fillOpacity:1})
+        .addTo(map).bindPopup(`<b>${stop.sc.name}</b><br>${stop.sc.kec}<br>${stop.qty} box – Stop ${si+1} – Tenggang ${tg} mnt<br><b style="color:${routeColor}">${sopOk?'✅ Sesuai SOP':'⚠️ Tidak Sesuai SOP'}</b>`);
+      schMks.push(m);
+    });
+
+    if(route){
+      const gl=L.geoJSON(route.geometry,{style:{color:routeColor,weight:5,opacity:.9}}).addTo(map);
+      routeLayers.push(gl);
+    }
+
+    const sl=vd.stops.map((s,i)=>`<div class="rs"><div class="rdot" style="background:${routeColor}"></div><span>Stop ${i+1}: ${s.sc.name} (${s.qty} box)</span></div>`).join('');
+    const distStr=distKm>0?distKm+' km':'–';
+    const durStr=durMin>0?'~'+durMin+' mnt':'–';
+    html.push(`<div class="rc${sopOk?'':' w'}">
+      <h4>Kendaraan ${vi+1} &nbsp;<span style="color:${routeColor};font-size:10px">${sopOk?'✅ Sesuai SOP':'⚠️ Tidak Sesuai SOP'}</span></h4>
+      ${sl}
+      <p style="margin-top:4px">${distStr} | ${durStr} | ${vd.total} box${!sopOk?`<br><span style="color:${COLOR_WARN}">${distKm>5?'Jarak >5 km ':''} ${durMin>30?'Durasi >30 mnt':''}</span>`:''}</p>
+    </div>`);
+  }
+
+  const allCoords=[[sppg.lat,sppg.lng],...stops.map(s=>[s.sc.lat,s.sc.lng])];
+  map.fitBounds(allCoords,{padding:[40,40]});
+  document.getElementById('resBody').innerHTML=html.join('');
+  document.getElementById('resPanel').classList.add('on');
+
+  btn.disabled=false;btn.innerHTML='&#128506; Hitung Semua Rute';
+  const nOk=active.filter((_,i)=>{
+    const vd=active[i];const coords=[[sppg.lat,sppg.lng],...vd.stops.map(s=>[s.sc.lat,s.sc.lng])];return true;
+  }).length;
+  toast(`${active.length} rute dihitung – cek panel hasil!`);
+}
+
+function resetAll(){
+  document.getElementById('sppgSel').value='';
+  document.getElementById('stopList').innerHTML='';
+  sid=0;
+  if(sppgMk){map.removeLayer(sppgMk);sppgMk=null;}
+  routeLayers.forEach(l=>map.removeLayer(l));routeLayers=[];
+  schMks.forEach(m=>map.removeLayer(m));schMks=[];
+  document.getElementById('resPanel').classList.remove('on');
+  document.getElementById('pBar').style.width='0%';
+  document.getElementById('capTxt').textContent='Terpakai: 0 / 1.000 box';
+  map.setView([-7.005,110.408],12);
+  toast('Reset berhasil');
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');
+  setTimeout(()=>t.classList.remove('on'),3000);
+}
+
+window.addEventListener('load',()=>{
+  if(typeof L!=='undefined'){initMap();populateSPPG();}
+  else{document.getElementById('map').innerHTML='<div style="padding:20px;color:red">Gagal memuat Leaflet. Coba refresh.</div>';}
+});
+</script>
